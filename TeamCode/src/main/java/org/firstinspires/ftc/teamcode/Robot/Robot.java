@@ -13,9 +13,9 @@ public class Robot extends LinearOpMode {
     public boolean butterflyON;
     public Robot(){
         fl = hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fl");
-        bl = hardwareMap.get(DcMotor.class, "fl");
-        br = hardwareMap.get(DcMotor.class, "fl");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
         sfl = hardwareMap.get(Servo.class, "sfl");
         sfr = hardwareMap.get(Servo.class, "sfr");
         sbl = hardwareMap.get(Servo.class, "sbl");

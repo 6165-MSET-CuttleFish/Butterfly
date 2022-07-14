@@ -23,6 +23,7 @@ public class simpleMec extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
             drive();
+            switchDrive();
         }
     }
     private void drive(){
