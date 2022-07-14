@@ -5,13 +5,14 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
+import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Robot.Robot;
 
 @TeleOp(name="simpleMec")
 public class simpleMec extends LinearOpMode {
     Robot robot;
-    GamepadEx gp = new GamepadEx(gamepad1);
+    //GamepadEx gp = new GamepadEx(gamepad1);
     private double fb; //forward backward movement
     private double lr; //left right movement
     private double turn; //turning movement
@@ -23,14 +24,14 @@ public class simpleMec extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
             drive();
-            switchDrive();
+            //switchDrive();
         }
     }
     private void drive(){
         if(!robot.butterflyON){
-            fb = gp.getLeftY();
-            lr = gp.getLeftX();
-            turn = gp.getRightX();
+            fb = gamepad1.left_stick_y;
+            lr = gamepad1.left_stick_x;
+            turn = gamepad1.right_stick_x;
             double r = Math.hypot(lr, fb);
             double target = Math.atan2(fb, lr) - Math.PI / 4;
             robot.fl.setPower(r * Math.cos(target) + turn);
@@ -46,9 +47,10 @@ public class simpleMec extends LinearOpMode {
             robot.br.setPower(fb);
         }
     }
+    /*
     private void switchDrive(){
         if(gp.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && robot.butterflyON == false) robot.butterflyON = true;
         else if(gp.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && robot.butterflyON == true) robot.butterflyON = false;
 
-    }
+    }*/
 }
