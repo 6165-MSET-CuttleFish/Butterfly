@@ -10,6 +10,7 @@ public class Robot extends LinearOpMode {
     public DcMotor fl,fr,bl,br;
     public Servo sfl,sfr,sbl,sbr;
     public OpenCvCamera camera;
+    public boolean butterflyON;
     public Robot(){
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fl");
@@ -17,9 +18,9 @@ public class Robot extends LinearOpMode {
         br = hardwareMap.get(DcMotor.class, "fl");
         sfl = hardwareMap.get(Servo.class, "sfl");
         sfr = hardwareMap.get(Servo.class, "sfr");
-        sbl= hardwareMap.get(Servo.class, "sbl");
+        sbl = hardwareMap.get(Servo.class, "sbl");
         sbr = hardwareMap.get(Servo.class, "sbr");
-
+        butterflyON = false;
     }
 
     @Override
