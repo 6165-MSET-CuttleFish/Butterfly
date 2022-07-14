@@ -19,7 +19,7 @@ public class simpleMec extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Robot();
 
-        
+
         waitForStart();
         while(opModeIsActive()){
             drive();
