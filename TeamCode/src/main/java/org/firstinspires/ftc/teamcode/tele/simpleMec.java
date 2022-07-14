@@ -18,7 +18,7 @@ public class simpleMec extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new Robot();
-
+        robot.runOpMode();
 
         waitForStart();
         while(opModeIsActive()){

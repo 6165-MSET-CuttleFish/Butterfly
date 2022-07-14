@@ -6,12 +6,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.openftc.easyopencv.OpenCvCamera;
 
-public class Robot extends LinearOpMode {
+public class Robot extends LinearOpMode{
     public DcMotor fl,fr,bl,br;
     public Servo sfl,sfr,sbl,sbr;
     public OpenCvCamera camera;
     public boolean butterflyON;
     public Robot(){
+
+        butterflyON = false;
+    }
+
+    @Override
+    public void runOpMode() throws InterruptedException {
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
@@ -20,11 +26,5 @@ public class Robot extends LinearOpMode {
         sfr = hardwareMap.get(Servo.class, "sfr");
         sbl = hardwareMap.get(Servo.class, "sbl");
         sbr = hardwareMap.get(Servo.class, "sbr");
-        butterflyON = false;
-    }
-
-    @Override
-    public void runOpMode() throws InterruptedException {
-
     }
 }
