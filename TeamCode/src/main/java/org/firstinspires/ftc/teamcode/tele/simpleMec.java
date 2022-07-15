@@ -18,13 +18,19 @@ public class simpleMec extends LinearOpMode {
     private double turn; //turning movement
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot();
-        robot.runOpMode();
+        robot = new Robot(this);
+
 
         waitForStart();
         while(opModeIsActive()){
-            drive();
+            //drive();
             //switchDrive();
+            robot.butterflyOn();
+            telemetry.addData("back left" ,robot.sbl.getPosition());
+            telemetry.addData("front left" ,robot.sfl.getPosition());
+            telemetry.addData("back right" ,robot.sbr.getPosition());
+            telemetry.addData("front right" ,robot.sfr.getPosition());
+            telemetry.update();
         }
     }
     private void drive(){
