@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tele;
 
+import com.arcrobotics.ftclib.gamepad.*;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,22 +11,31 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Robot.Robot;
 
 @TeleOp(name="simpleMec")
+
 public class simpleMec extends LinearOpMode {
     Robot robot;
-    //GamepadEx gp = new GamepadEx(gamepad1);
+    GamepadEx primary;
+    GamepadEx secondary;
+    KeyReader[] keyReaders;
+    ButtonReader butterflyToggle;
+
     private double fb; //forward backward movement
     private double lr; //left right movement
     private double turn; //turning movement
     @Override
     public void runOpMode() throws InterruptedException {
+        
         robot = new Robot(this);
-
+        primary = new GamepadEx(gamepad1);
+        secondary = new GamepadEx(gamepad2);
+        keyReaders = new KeyReader[] {
+                butterflyToggle = new ButtonReader(primary, GamepadKeys.Button.LEFT_BUMPER)
+        };
 
         waitForStart();
         while(opModeIsActive()){
-            //drive();
-            //switchDrive();
-            robot.butterflyOn();
+            drive();
+            switchDrive();
             telemetry.addData("back left" ,robot.sbl.getPosition());
             telemetry.addData("front left" ,robot.sfl.getPosition());
             telemetry.addData("back right" ,robot.sbr.getPosition());
@@ -52,11 +62,19 @@ public class simpleMec extends LinearOpMode {
             robot.bl.setPower(fb);
             robot.br.setPower(fb);
         }
+//        idle();
     }
-    /*
-    private void switchDrive(){
-        if(gp.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && robot.butterflyON == false) robot.butterflyON = true;
-        else if(gp.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && robot.butterflyON == true) robot.butterflyON = false;
 
-    }*/
+    private void switchDrive(){
+        GamepadEx gp = new GamepadEx(gamepad1);
+        if(gp.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && !robot.butterflyON){
+            robot.butterflyON = true;
+            robot.butterflyOn();
+        }
+        else if(gp.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && robot.butterflyON) {
+            robot.butterflyON = false;
+            robot.butterflyOn();
+        }
+
+    }
 }

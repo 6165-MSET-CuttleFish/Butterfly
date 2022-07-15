@@ -25,7 +25,9 @@ public class Robot{
         sfr = hardwareMap.get(Servo.class, "sfr");
         sbl = hardwareMap.get(Servo.class, "sbl");
         sbr = hardwareMap.get(Servo.class, "sbr");
-        butterflyON = false;
+
+        if (butterflyON) butterflyOn();
+        if(!butterflyON) butterflyOff();
     }
     public void butterflyOn(){
         sfl.setPosition(0.46);
