@@ -22,7 +22,7 @@ public class simpleMec extends LinearOpMode {
     GamepadEx primary;
     GamepadEx secondary;
     KeyReader[] keyReaders;
-    ButtonReader butterflyToggle;
+    ButtonReader butterflyOnToggle, butterflyOffToggle;
 
     private double fb; //forward backward movement
     private double lr; //left right movement
@@ -34,7 +34,8 @@ public class simpleMec extends LinearOpMode {
         primary = new GamepadEx(gamepad1);
         secondary = new GamepadEx(gamepad2);
         keyReaders = new KeyReader[]{
-                butterflyToggle = new ButtonReader(primary, GamepadKeys.Button.LEFT_BUMPER)
+                butterflyOnToggle = new ButtonReader(primary, GamepadKeys.Button.LEFT_BUMPER),
+//                butterflyOffToggle = new ButtonReader(primary, GamepadKeys.Button.RIGHT_BUMPER)
         };
 
         waitForStart();
@@ -54,8 +55,12 @@ public class simpleMec extends LinearOpMode {
 
     private void drive() {
         if (!robot.butterflyON) {
+            //prevents accidental strafing
+            if (Math.abs(gamepad1.left_stick_x) > 0.2)
+                lr = gamepad1.left_stick_x;
+            else
+                lr = 0;
             fb = -gamepad1.left_stick_y;
-            lr = gamepad1.left_stick_x;
             turn = gamepad1.right_stick_x;
             double r = Math.hypot(lr, fb);
             double target = Math.atan2(fb, lr) - Math.PI / 4;
@@ -64,22 +69,23 @@ public class simpleMec extends LinearOpMode {
             robot.bl.setPower(r * Math.sin(target) + turn);
             robot.br.setPower(r * Math.cos(target) - turn);
         } else {
-            fb = Math.sqrt(gamepad1.left_stick_y);
-            robot.fl.setPower(fb);
-            robot.fr.setPower(fb);
-            robot.bl.setPower(fb);
-            robot.br.setPower(fb);
+            fb = -gamepad1.left_stick_y;
+            turn = gamepad1.right_stick_x;
+            robot.fl.setPower(fb + turn);
+            robot.fr.setPower(fb - turn);
+            robot.bl.setPower(fb + turn);
+            robot.br.setPower(fb - turn);
         }
 //        idle();
     }
 
     private void switchDrive() {
-        if (butterflyToggle.wasJustPressed() && !robot.butterflyON) {
+        if (butterflyOnToggle.wasJustPressed() && !robot.butterflyON) {
             robot.butterflyON = true;
             robot.butterflyOn();
-        } else if (butterflyToggle.wasJustPressed() && robot.butterflyON) {
+        } else if (butterflyOnToggle.wasJustPressed() && robot.butterflyON) {
             robot.butterflyON = false;
-            robot.butterflyOn();
+            robot.butterflyOff();
         }
 
     }
