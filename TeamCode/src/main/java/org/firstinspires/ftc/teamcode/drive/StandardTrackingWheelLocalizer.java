@@ -31,9 +31,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 0.75; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 16.614; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 16.4337; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = 7; // in; offset of the lateral wheel
 
+    public static double xMultiplier = 0.93640265;
+    public static double yMultiplier = 0.93264249;
     private Encoder leftEncoder, rightEncoder, backEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
@@ -47,6 +49,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "br"));
         backEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "bl"));
 
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        backEncoder.setDirection(Encoder.Direction.REVERSE);
+
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
 
@@ -58,9 +63,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(leftEncoder.getCurrentPosition()),
-                encoderTicksToInches(rightEncoder.getCurrentPosition()),
-                encoderTicksToInches(backEncoder.getCurrentPosition())
+                encoderTicksToInches(leftEncoder.getCurrentPosition() * xMultiplier),
+                encoderTicksToInches(rightEncoder.getCurrentPosition() * xMultiplier),
+                encoderTicksToInches(backEncoder.getCurrentPosition() * yMultiplier)
         );
     }
 
@@ -72,9 +77,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         //  compensation method
 
         return Arrays.asList(
-                encoderTicksToInches(leftEncoder.getCorrectedVelocity()),
-                encoderTicksToInches(rightEncoder.getCorrectedVelocity()),
-                encoderTicksToInches(backEncoder.getCorrectedVelocity())
+                encoderTicksToInches(leftEncoder.getCorrectedVelocity() * xMultiplier),
+                encoderTicksToInches(rightEncoder.getCorrectedVelocity() * xMultiplier),
+                encoderTicksToInches(backEncoder.getCorrectedVelocity() * yMultiplier)
         );
     }
 }
