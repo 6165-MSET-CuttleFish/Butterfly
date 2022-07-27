@@ -14,9 +14,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 @Config
-public class Robot{
+public class Robot extends SampleMecanumDrive {
     public DcMotor fl,fr,bl,br;
     public Servo sfl, sfr, sbl, sbr;
     public OpenCvCamera camera;
@@ -26,7 +27,9 @@ public class Robot{
     public Orientation lastAngles = new Orientation();
     public double globalAngle;
 
-    public Robot(OpMode opmode){
+    public Robot(OpMode opmode) {
+        super(opmode.hardwareMap);
+
         hardwareMap = opmode.hardwareMap;
 
         fl = hardwareMap.get(DcMotor.class, "fl");
@@ -60,6 +63,7 @@ public class Robot{
             butterflyON = false;
         }
     }
+
     public void butterflyOn(){
         sfl.setPosition(0.47);
         sbr.setPosition(0.80);
