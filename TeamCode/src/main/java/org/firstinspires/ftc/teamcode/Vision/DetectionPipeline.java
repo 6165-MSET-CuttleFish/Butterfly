@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Vision;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -22,14 +22,15 @@ public class DetectionPipeline extends OpenCvPipeline {
     }
 
     private Mat mat;
-    private Mat ret;
-    Scalar lowerOrange = new Scalar(112, 78, 18);
-    Scalar upperOrange = new Scalar(253, 224, 129);
+    private Mat ret;//214, 150, 39
+    Scalar lowerOrange = new Scalar(0, 0, 0);
+    Scalar upperOrange = new Scalar(10, 10, 10);
+
     private double x;
     private double y;
     double width;
     double height;
-    public static int CAMERA_WIDTH = 320;
+    public static int CAMERA_WIDTH = 640;
     public static int HORIZON = (int) ((100.0 / 320.0) * CAMERA_WIDTH);
 
     @Override
@@ -40,13 +41,13 @@ public class DetectionPipeline extends OpenCvPipeline {
         ret = new Mat(); // resetting pointer held in ret
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2Lab); //YELLOW
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2Luv); //YELLOW
 
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
-            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
+            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8U); // variable to store mask in
             Core.inRange(mat, lowerOrange, upperOrange, mask);
-
+            
             /**applying to input and putting it on ret in black or yellow**/
             Core.bitwise_and(input, input, ret, mask);
 
