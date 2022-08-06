@@ -47,7 +47,7 @@ public class DetectionPipeline extends OpenCvPipeline {
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
             Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8U); // variable to store mask in
             Core.inRange(mat, lowerOrange, upperOrange, mask);
-            
+
             /**applying to input and putting it on ret in black or yellow**/
             Core.bitwise_and(input, input, ret, mask);
 
