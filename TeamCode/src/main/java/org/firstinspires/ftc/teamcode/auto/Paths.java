@@ -27,7 +27,7 @@ public class Paths extends LinearOpMode {
                 //.splineTo(new Vector2d(10, -8), Math.toRadians(0))
                 .build();
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .splineToConstantHeading(   new Vector2d(10, -8), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(10, -8), Math.toRadians(90))
                 .build();
 
         telemetry.addData("inited", 1);
