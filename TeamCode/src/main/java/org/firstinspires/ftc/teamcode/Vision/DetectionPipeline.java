@@ -13,7 +13,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-
 public class DetectionPipeline extends OpenCvPipeline {
     public DetectionPipeline(){
         ret = new Mat();
@@ -22,16 +21,15 @@ public class DetectionPipeline extends OpenCvPipeline {
     }
 
     private Mat mat;
-    private Mat ret;//214, 150, 39
-    Scalar lowerOrange = new Scalar(0, 0, 0);
-    Scalar upperOrange = new Scalar(10, 10, 10);
-
+    private Mat ret;
+    Scalar lowerOrange = new Scalar(5.0 / 2, 50, 40);
+    Scalar upperOrange = new Scalar(80.0 / 2, 255, 255);
     private double x;
     private double y;
     double width;
     double height;
-    public static int CAMERA_WIDTH = 640;
-    public static int HORIZON = (int) ((100.0 / 320.0) * CAMERA_WIDTH);
+    public static int CAMERA_WIDTH = 320;
+    public static int HORIZON = (int)((100.0 / 320.0) * CAMERA_WIDTH);
 
     @Override
     public Mat processFrame(Mat input) {
@@ -41,18 +39,19 @@ public class DetectionPipeline extends OpenCvPipeline {
         ret = new Mat(); // resetting pointer held in ret
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2Luv); //YELLOW
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGBA2RGB);
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
-            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8U); // variable to store mask in
+            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
             Core.inRange(mat, lowerOrange, upperOrange, mask);
 
             /**applying to input and putting it on ret in black or yellow**/
             Core.bitwise_and(input, input, ret, mask);
 
             /**applying GaussianBlur to reduce noise when finding contours**/
-            Imgproc.GaussianBlur(mask, mask, new Size(15.0, 15.0), 0.00);
+            Imgproc.GaussianBlur(mask, mask, new Size(5.0, 15.0), 0.00);
 
             /**finding contours on mask**/
             ArrayList<MatOfPoint> contours = new ArrayList<>();
@@ -107,4 +106,3 @@ public class DetectionPipeline extends OpenCvPipeline {
         return y;
     }
 }
-
