@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -22,8 +25,8 @@ public class DetectionPipeline extends OpenCvPipeline {
 
     private Mat mat;
     private Mat ret;
-    Scalar lowerOrange = new Scalar(5.0 / 2, 50, 40);
-    Scalar upperOrange = new Scalar(80.0 / 2, 255, 255);
+    Scalar lowerOrange = new Scalar(5.0 / 2, 95, 95);
+    Scalar upperOrange = new Scalar(65.0 / 2, 255, 255);
     private double x;
     private double y;
     double width;
@@ -44,7 +47,7 @@ public class DetectionPipeline extends OpenCvPipeline {
 
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
-            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
+            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8U); // variable to store mask in
             Core.inRange(mat, lowerOrange, upperOrange, mask);
 
             /**applying to input and putting it on ret in black or yellow**/
@@ -59,18 +62,24 @@ public class DetectionPipeline extends OpenCvPipeline {
             Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
             /**drawing contours to ret in green**/
-            Imgproc.drawContours(ret, contours, -1, new Scalar(0.0, 255.0, 0.0), 3);
+            int minWidth = 50;
+            int minHeight = 50;
             for (MatOfPoint c: contours) {
+                Imgproc.drawContours(ret, contours, -1, new Scalar(0.0, 255.0, 0.0), 3);
                 MatOfPoint2f copy = new MatOfPoint2f(c.toArray());
                 RotatedRect ellipse =  Imgproc.fitEllipse(copy);
+                double h = ellipse.size.height;
+                double w = ellipse.size.width;
                 // checking if the rectangle is below the horizon
-                if (ellipse.center.y + ellipse.size.height > HORIZON) {
+                if ((h > minHeight && w > minWidth) && ellipse.center.y + ellipse.size.height > HORIZON) {
                     width = ellipse.size.width;
                     height = ellipse.size.height;
                     x = ellipse.center.x;
                     y = ellipse.center.y;
                     Imgproc.ellipse(ret, ellipse, new Scalar(0.0, 0.0, 255.0), 2);
+                    Imgproc.putText(ret, ""+ Math.max(0, ellipse.size.height), new Point(50, 50), Imgproc.FONT_HERSHEY_PLAIN,5, new Scalar(255.0, 255.0, 255.0), 1);
                 }
+
                 c.release(); // releasing the buffer of the contour, since after use, it is no longer needed
                 copy.release(); // releasing the buffer of the copy of the contour, since after use, it is no longer needed
             }
@@ -98,6 +107,7 @@ public class DetectionPipeline extends OpenCvPipeline {
         }
         return ret;
     }
+
 
     public double getX(){
         return x;

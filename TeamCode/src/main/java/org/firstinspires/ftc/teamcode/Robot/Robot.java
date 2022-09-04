@@ -2,22 +2,39 @@ package org.firstinspires.ftc.teamcode.Robot;
 
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Vision.DetectionPipeline;
+import org.firstinspires.ftc.teamcode.auto.Coordinate;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.ArrayList;
+
 @Config
 public class Robot extends SampleMecanumDrive {
+    private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
+    private static final int CAMERA_HEIGHT = 480; // height of wanted camera resolution
+    public OpenCvWebcam webcam;
+    FtcDashboard dashboard = FtcDashboard.getInstance();
     public DcMotor fl,fr,bl,br;
     public Servo sfl, sfr, sbl, sbr;
     public OpenCvCamera camera;
@@ -32,7 +49,24 @@ public class Robot extends SampleMecanumDrive {
 
         hardwareMap = opmode.hardwareMap;
 
-        fl = hardwareMap.get(DcMotor.class, "fl");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        webcam.setPipeline(new DetectionPipeline());
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+                dashboard.startCameraStream(webcam, 30);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+
+
+    fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         br = hardwareMap.get(DcMotor.class, "br");
@@ -93,4 +127,5 @@ public class Robot extends SampleMecanumDrive {
 
         return globalAngle;
     }
+
 }

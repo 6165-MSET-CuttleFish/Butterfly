@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.Robot.Robot;
 import org.firstinspires.ftc.teamcode.Vision.DetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
@@ -21,10 +22,9 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 
 public class BlockDetector extends DetectionPipeline {
-    public BlockDetector(LinearOpMode opMode, SampleMecanumDrive drive){
+    public BlockDetector(SampleMecanumDrive drive){
         ret = new Mat();
         mat = new Mat();
-        this.linearOpMode = opMode;
         areaPerpendicular = new InterpLUT();
         angleCalculator = new InterpLUT();
         distanceCalculator = new InterpLUT();
@@ -126,10 +126,10 @@ public class BlockDetector extends DetectionPipeline {
     private final InterpLUT angleCalculator;
     private final InterpLUT distanceCalculator;
     private LinearOpMode linearOpMode;
-    private ArrayList<Pose2d> vectors = new ArrayList<>();
+    public static ArrayList<Pose2d> vectors = new ArrayList<>();
 
-    Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
-    Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
+    Scalar lowerOrange = new Scalar(5.0 / 2, 95, 95);
+    Scalar upperOrange = new Scalar(65.0 / 2, 255, 255);
     private double x;
     private double y;
     double width;
@@ -153,7 +153,8 @@ public class BlockDetector extends DetectionPipeline {
         ret = new Mat(); // resetting pointer held in ret
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGBA2RGB);
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
             Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
@@ -243,18 +244,18 @@ public class BlockDetector extends DetectionPipeline {
         }
         return ret;
     }
-//    public ArrayList<Vector2d> getVectors(Pose2d currentPose){
-//        ArrayList<Vector2d> list = new ArrayList<>();
-//        Coordinate current = new Coordinate(currentPose);
-//        for(Pose2d pose2d : vectors){
-//            Coordinate temp = current.toPoint();
-//            temp.polarAdd(currentPose.getHeading() - Math.PI, 3.5);
-//            temp.polarAdd(pose2d.getHeading() + currentPose.getHeading(), pose2d.getY());
-//            temp.setPoint(Range.clip(temp.getX(), 0, 55.7), Range.clip(temp.getY(), -30, 5));
-//            list.add(temp.toPose2d(0).vec());
-//        }
-//        return list;
-//    }
+    public ArrayList<Vector2d> getVectors(Pose2d currentPose){
+        ArrayList<Vector2d> list = new ArrayList<>();
+        Coordinate current = new Coordinate(currentPose);
+        for(Pose2d pose2d : vectors){
+            Coordinate temp = current.toPoint();
+            temp.polarAdd(currentPose.getHeading() - Math.PI, 3.5);
+            temp.polarAdd(pose2d.getHeading() + currentPose.getHeading(), pose2d.getY());
+            temp.setPoint(Range.clip(temp.getX(), 0, 55.7), Range.clip(temp.getY(), -30, 5));
+            list.add(temp.toPose2d(0).vec());
+        }
+        return list;
+    }
     public double getX(){
         return x;
     }

@@ -8,6 +8,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+import org.firstinspires.ftc.teamcode.Vision.DetectionPipeline;
 
 
 @TeleOp(name = "Detection Test")
@@ -41,8 +42,7 @@ public class Detection extends OpMode {
         telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
         telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
         telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-        telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-        telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
+
         telemetry.update();
     }
 }
